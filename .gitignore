@@ -1,0 +1,35 @@
+# InterviewPilot AI — Root .gitignore
+
+# Environment
+.env
+.env.*
+*.env
+*.env.local
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Uploaded resumes (local storage — do not commit)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Test & scratch files (do not commit)
+test_*.pdf
+test_*.txt
+server/test_*.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/

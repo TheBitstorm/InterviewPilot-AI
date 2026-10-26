@@ -1,0 +1,40 @@
+{
+  "name": "interviewpilot-ai-server",
+  "version": "1.0.0",
+  "description": "InterviewPilot AI — Backend API Server",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "build": "prisma generate",
+    "start": "node src/server.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push"
+  },
+  "keywords": [
+    "interview",
+    "ai",
+    "placement"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.5.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.1",
+    "openai": "^4.104.0",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.23.0",
+    "zod": "^3.25.74"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^7.9.1"
+  }
+}

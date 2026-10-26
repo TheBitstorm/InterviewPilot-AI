@@ -1,0 +1,1646 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+.ip {
+  --bg: #F2EEE6;
+  --ink: #0A0A0A;
+  --red: #EC4F5F;
+  --orange: #FF5A1F;
+  --yellow: #F4CF63;
+  --w: #fff;
+  --pad: clamp(16px, 3.2vw, 40px);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
+.ip *, .ip *::before, .ip *::after {
+  box-sizing: inherit;
+}
+
+.ip {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.ip a {
+  color: inherit;
+  transition: color 0.18s ease;
+}
+
+.ip :focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.ip h1, .ip h2, .ip h3 {
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.02;
+}
+
+.ip h2 {
+  font-size: clamp(28px, 3.8vw, 48px);
+}
+
+.ip p {
+  margin: 0;
+}
+
+/* ── 1. BALANCED SECTION PROPORTIONS & NATURAL CONTAINER ─────────────────── */
+/* Natural container: comfortably fills desktop width with balanced margins */
+.ip .in {
+  max-width: 1250px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Sections: height naturally determined by content with comfortable vertical padding */
+.ip section:not(.hero) {
+  padding: clamp(64px, 7.5vh, 84px) var(--pad);
+  position: relative;
+  box-sizing: border-box;
+  opacity: 0.15;
+  transform: translateY(18px);
+  transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── 2. DIFFERENT SECTION ENTRANCE MOTIONS (SCROLL DOWN + UP DYNAMIC) ────── */
+/* What is InterviewPilot: Heading from Left, Body from Right */
+.ip .what {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 3.5vw, 48px);
+  align-items: center;
+}
+
+.ip .what > h2 {
+  opacity: 0.15;
+  transform: translateX(-36px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip .what > div {
+  opacity: 0.15;
+  transform: translateX(36px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip section.is-visible .what > h2,
+.ip section.is-visible .what > div {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ip .what p.big {
+  font-size: 18px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+/* Red section: Heading from Left, Adapt card from Right */
+.ip .red {
+  background: var(--red);
+  border-block: 3px solid var(--ink);
+}
+
+.ip .two {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(32px, 3.5vw, 48px);
+  align-items: center;
+}
+
+.ip .two > div:first-child {
+  opacity: 0.15;
+  transform: translateX(-36px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip .two > div:last-child {
+  opacity: 0.15;
+  transform: translateX(36px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip section.is-visible .two > div:first-child,
+.ip section.is-visible .two > div:last-child {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Why section: Left side slides in, Right side stamps in */
+.ip .why {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 3.5vw, 48px);
+  align-items: center;
+}
+
+.ip .why > div:first-child {
+  opacity: 0.15;
+  transform: translateX(-32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip .why > div:last-child {
+  opacity: 0.15;
+  transform: translateX(32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip section.is-visible .why > div:first-child,
+.ip section.is-visible .why > div:last-child {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Dark section styling */
+.ip .dark {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.ip .dark h2 {
+  color: var(--bg);
+}
+
+/* ── 3. BUTTONS & MICRO-INTERACTIONS ─────────────────────────────────────── */
+.ip .btn {
+  background: var(--ink);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 16px 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 14px;
+  align-items: center;
+  box-shadow: 5px 5px 0 var(--orange);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.ip .btn:hover {
+  transform: translate(-3px, -3px) scale(1.015);
+  box-shadow: 8px 8px 0 var(--orange);
+}
+
+.ip .btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--orange);
+}
+
+.ip .btn em {
+  background: var(--orange);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ip .btn:hover em {
+  transform: translateX(4px) scale(1.1);
+}
+
+.ip .pill {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 11px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  will-change: transform;
+}
+
+.ip .pill:hover {
+  transform: translate(-2px, -2px) scale(1.02);
+  box-shadow: 5px 5px 0 var(--orange);
+}
+
+.ip .pill:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--orange);
+}
+
+/* ── 4. NAVIGATION ───────────────────────────────────────────────────────── */
+.ip nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--pad);
+  border-bottom: 3px solid var(--ink);
+  box-shadow: 0 4px 0 rgba(10, 10, 10, 0.05);
+}
+
+.ip .logo {
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  transition: transform 0.2s ease;
+}
+
+.ip .logo:hover {
+  transform: scale(1.02);
+}
+
+.ip .logo svg {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ip .logo:hover svg {
+  transform: rotate(6deg) scale(1.08);
+}
+
+.ip .logo b {
+  color: var(--red);
+  font-weight: 400;
+}
+
+.ip .links {
+  display: flex;
+  gap: 26px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ip .links a {
+  position: relative;
+  text-decoration: none;
+}
+
+.ip .links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: width 0.2s ease;
+}
+
+.ip .links a:hover::after {
+  width: 100%;
+}
+
+.ip .navr {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.ip .navr .lg {
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.ip .navr .lg:hover {
+  transform: translateY(-1px);
+  color: var(--orange);
+}
+
+/* ── 5. FULL-SCREEN HERO VIEWPORT ────────────────────────────────────────── */
+.ip .hero {
+  min-height: calc(100vh - 73px);
+  min-height: calc(100svh - 73px);
+  display: grid;
+  grid-template-columns: 1.16fr 0.84fr;
+  gap: clamp(32px, 3.5vw, 52px);
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(20px, 3vh, 44px);
+  padding-bottom: clamp(28px, 4vh, 56px);
+  box-sizing: border-box;
+}
+
+.ip .stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 690px;
+  width: 100%;
+}
+
+.ip .card {
+  padding: 24px 30px;
+  box-shadow: 8px 8px 0 var(--ink);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  will-change: transform;
+}
+
+.ip .card:active {
+  transform: scale(0.985) translate(2px, 2px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* ── 6. CONTINUOUS LIVING MOVEMENT (SLOW, CURATED, PREMIUM) ───────────────── */
+@keyframes swayLeftRight {
+  0% { translate: 0 0; }
+  100% { translate: 7px 0; }
+}
+
+@keyframes swayRightLeft {
+  0% { translate: 0 0; }
+  100% { translate: -7px 0; }
+}
+
+@keyframes floatUpDown {
+  0% { translate: 0 0; }
+  100% { translate: 0 -6px; }
+}
+
+/* Hero Card 1: Drift LEFT → RIGHT */
+.ip .c1 {
+  background: var(--ink);
+  color: var(--red);
+  transform: rotate(-1.5deg);
+  border-radius: 6px;
+  animation: swayLeftRight 8.4s ease-in-out infinite alternate;
+}
+
+.ip .c1:hover {
+  animation-play-state: paused;
+  transform: rotate(-1deg) translateY(-8px) scale(1.025);
+  box-shadow: 13px 13px 0 var(--ink);
+}
+
+.ip .c1:active {
+  transform: rotate(-1deg) translateY(2px) scale(0.99);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.ip .c1 h1 {
+  font-size: clamp(28px, 3.5vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+.ip .c1 h1 span {
+  color: var(--bg);
+}
+
+/* Hero Card 2: Drift RIGHT → LEFT */
+.ip .c2 {
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  transform: rotate(1deg);
+  margin-left: 28px;
+  animation: swayRightLeft 9.2s ease-in-out 0.8s infinite alternate;
+}
+
+.ip .c2:hover {
+  animation-play-state: paused;
+  transform: rotate(1.2deg) translateY(-8px) scale(1.025);
+  box-shadow: 13px 13px 0 var(--ink);
+}
+
+.ip .c2:active {
+  transform: rotate(1.2deg) translateY(2px) scale(0.99);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.ip .c2 h2 {
+  font-size: clamp(23px, 2.5vw, 32px);
+  line-height: 1.05;
+}
+
+/* Hero Card 3: Float UP → DOWN */
+.ip .c3 {
+  background: var(--bg);
+  border: 3px solid var(--ink);
+  transform: rotate(-0.6deg);
+  font-size: 16.5px;
+  line-height: 1.6;
+  animation: floatUpDown 7.6s ease-in-out 1.5s infinite alternate;
+}
+
+.ip .c3:hover {
+  animation-play-state: paused;
+  transform: rotate(-0.2deg) translateY(-8px) scale(1.02);
+  box-shadow: 13px 13px 0 var(--ink);
+}
+
+.ip .c3:active {
+  transform: rotate(-0.2deg) translateY(2px) scale(0.99);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.ip .cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.ip .cta .sec {
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.ip .cta .sec:hover {
+  transform: translateX(4px);
+  color: var(--orange);
+}
+
+/* ── 7. ROBOT & SPEECH BUBBLE (ZERO OVERLAP + LIVE INTERACTION) ─────────── */
+.ip .robot-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Speech bubble cleanly sits above the robot with guaranteed zero overlap */
+.ip .bubble {
+  position: relative;
+  align-self: flex-start;
+  margin-left: 18px;
+  margin-bottom: 8px;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: rotate(-2.5deg);
+  z-index: 10;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  white-space: nowrap;
+  animation: bubbleSuspendedFloat 3.8s ease-in-out infinite;
+  will-change: translate, transform;
+  cursor: pointer;
+}
+
+/* Neo-brutalist tail pointing down toward the robot */
+.ip .bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 28px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 11px 10px 0 0;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+.ip .bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 7px 0 0;
+  border-color: var(--yellow) transparent transparent transparent;
+}
+
+@keyframes bubbleSuspendedFloat {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+.ip .bubble:hover {
+  transform: rotate(-1.5deg) translateY(-8px) scale(1.03) !important;
+  box-shadow: 8px 8px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip svg.bot {
+  width: min(100%, 400px);
+  height: auto;
+  overflow: visible;
+  transform: rotate(var(--robot-tilt, 0deg));
+  transition: transform 0.25s ease-out;
+}
+
+.ip .robot-wrap:hover svg.bot {
+  transform: rotate(var(--robot-tilt, 0deg)) translateY(-4px) scale(1.02);
+}
+
+/* Click reaction: excited hop */
+.ip .robot-wrap.is-excited svg.bot {
+  animation: excitedBounce 0.75s ease;
+}
+
+@keyframes excitedBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-16px) scale(1.05); }
+  70% { transform: translateY(2px) scale(0.98); }
+}
+
+.ip .float {
+  animation: float 3.4s ease-in-out infinite;
+}
+
+.ip .wave {
+  transform-origin: 292px 292px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+
+.ip .robot-wrap:hover .wave,
+.ip .robot-wrap.is-excited .wave {
+  animation-duration: 0.7s;
+}
+
+/* Eye Tracking group follows cursor independently */
+.ip .eye-track {
+  transform: translate(var(--robot-eye-x, 0px), var(--robot-eye-y, 0px));
+  transition: transform 0.12s ease-out;
+}
+
+.ip .blink {
+  transform-origin: 200px 182px;
+  animation: blink 4.5s infinite;
+}
+
+.ip .cheek-left,
+.ip .cheek-right {
+  animation: cheekGlow 3.5s ease-in-out infinite alternate;
+}
+
+.ip .robot-wrap.is-excited .cheek-left,
+.ip .robot-wrap.is-excited .cheek-right {
+  fill: var(--red);
+  opacity: 1;
+}
+
+@keyframes cheekGlow {
+  0% { opacity: 0.75; }
+  100% { opacity: 1; }
+}
+
+.ip .shadow {
+  animation: shade 3.4s ease-in-out infinite;
+  transform-origin: 200px 428px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes shade {
+  0%, 100% { transform: scaleX(1); opacity: 0.18; }
+  50% { transform: scaleX(0.82); opacity: 0.10; }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(26deg); }
+}
+
+@keyframes blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.08); }
+}
+
+/* ── 8. SECTION GRIDS: FIVE STEP SEQUENTIAL WATERFALL ───────────────────── */
+.ip #features {
+  background: var(--yellow);
+}
+
+.ip #features .tag.y {
+  background: var(--w);
+}
+
+.ip section:not(.hero)#features .tags .tag,
+.ip section:not(.hero) #features .tags .tag {
+  opacity: 0.15;
+  transform: translateY(16px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+}
+
+.ip section.is-visible#features .tags .tag:nth-child(1),
+.ip section.is-visible #features .tags .tag:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.08s; }
+.ip section.is-visible#features .tags .tag:nth-child(2),
+.ip section.is-visible #features .tags .tag:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.16s; }
+.ip section.is-visible#features .tags .tag:nth-child(3),
+.ip section.is-visible #features .tags .tag:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.24s; }
+.ip section.is-visible#features .tags .tag:nth-child(4),
+.ip section.is-visible #features .tags .tag:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.32s; }
+
+/* Five Step Grid Cards (General Base) */
+.ip .five {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 36px;
+}
+
+/* Meet Your AI Interviewer Cards */
+.ip .dark .five > div {
+  border: 2px solid var(--bg);
+  padding: 20px 18px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+
+/* Staggered entrance for Meet Your AI Interviewer cards on scroll */
+.ip section:not(.hero) .dark .five > div {
+  opacity: 0.15;
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* ── MEET YOUR AI INTERVIEWER: ORGANIC SUBTLE CARD TILTS ─────────────────── */
+/* Individual playful micro-rotations inspired by the skill gaps badges */
+.ip .dark .five > div:nth-child(1) { transform: translateY(22px) rotate(-1.1deg); }
+.ip .dark .five > div:nth-child(2) { transform: translateY(22px) rotate(0.6deg); }
+.ip .dark .five > div:nth-child(3) { transform: translateY(22px) rotate(-0.8deg); }
+.ip .dark .five > div:nth-child(4) { transform: translateY(22px) rotate(1.1deg); }
+.ip .dark .five > div:nth-child(5) { transform: translateY(22px) rotate(-0.5deg); }
+
+.ip section.is-visible.dark .five > div:nth-child(1),
+.ip section.is-visible .dark .five > div:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0) rotate(-1.1deg);
+  transition-delay: 0.05s;
+}
+
+.ip section.is-visible.dark .five > div:nth-child(2),
+.ip section.is-visible .dark .five > div:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0) rotate(0.6deg);
+  transition-delay: 0.15s;
+}
+
+.ip section.is-visible.dark .five > div:nth-child(3),
+.ip section.is-visible .dark .five > div:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0) rotate(-0.8deg);
+  transition-delay: 0.25s;
+}
+
+.ip section.is-visible.dark .five > div:nth-child(4),
+.ip section.is-visible .dark .five > div:nth-child(4) {
+  opacity: 1;
+  transform: translateY(0) rotate(1.1deg);
+  transition-delay: 0.35s;
+}
+
+.ip section.is-visible.dark .five > div:nth-child(5),
+.ip section.is-visible .dark .five > div:nth-child(5) {
+  opacity: 1;
+  transform: translateY(0) rotate(-0.5deg);
+  transition-delay: 0.45s;
+}
+
+/* Hover: immediately straightens and pops up */
+.ip .dark .five > div:hover {
+  transform: translateY(-8px) rotate(0deg) scale(1.03) !important;
+  border-color: var(--orange) !important;
+  box-shadow: 0 10px 24px rgba(255, 90, 31, 0.38) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .dark .five > div:active {
+  transform: translateY(2px) scale(0.98) !important;
+  box-shadow: 0 4px 10px rgba(255, 90, 31, 0.2) !important;
+  transition-delay: 0s !important;
+}
+
+/* Number pop on hover */
+.ip .dark .five > div b {
+  display: block;
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  color: var(--orange);
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.18s ease;
+  will-change: transform;
+}
+
+.ip .dark .five > div:hover b {
+  transform: scale(1.15) translateY(-2px);
+  color: var(--orange);
+  transition-delay: 0s !important;
+}
+
+/* Text slight lift on hover */
+.ip .dark .five > div span {
+  display: block;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.ip .dark .five > div:hover span {
+  transform: translateY(-1.5px);
+  transition-delay: 0s !important;
+}
+
+/* Light Five Cards (General default) */
+.ip .five:not(.l) b {
+  display: block;
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  color: var(--orange);
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: transform 0.2s ease;
+}
+
+.ip .five:not(.l) > div:hover b {
+  transform: scale(1.1);
+}
+
+/* Five Cards Light (How it works — Previous Dynamic Interactive Version) */
+.ip .five.l {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.ip section:not(.hero) .five.l > div {
+  background: var(--w);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 20px 18px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  opacity: 0.15;
+  transform: translateY(22px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  will-change: transform, opacity;
+  cursor: pointer;
+}
+
+.ip section.is-visible .five.l > div:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .five.l > div:nth-child(2) { transition-delay: 0.12s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .five.l > div:nth-child(3) { transition-delay: 0.19s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .five.l > div:nth-child(4) { transition-delay: 0.26s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .five.l > div:nth-child(5) { transition-delay: 0.33s; opacity: 1; transform: translateY(0); }
+
+/* Immediate responsive lift/pop on hover */
+.ip .five.l > div:hover {
+  transform: translateY(-8px) scale(1.03) !important;
+  box-shadow: 10px 10px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .five.l > div:active {
+  transform: translateY(2px) scale(0.98) !important;
+  box-shadow: 3px 3px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+/* Prominent number with pop-up emphasis on card hover */
+.ip .five.l b {
+  display: block;
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  color: var(--red);
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.ip .five.l > div:hover b {
+  transform: scale(1.15) translateY(-2px);
+  transition-delay: 0s !important;
+}
+
+.ip .five.l h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 17px;
+  margin: 6px 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ip .five.l > div:hover h3 {
+  transform: translateY(-1px);
+  transition-delay: 0s !important;
+}
+
+.ip .five.l p {
+  font-size: 14px;
+}
+
+/* ── 9. PROGRESS BARS, SCORECARD & ROADMAP LEVEL ANIMATION ──────────────── */
+/* Adapt Card */
+.ip .adapt {
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+  padding: 28px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.ip .adapt:hover {
+  transform: translateY(-8px) scale(1.025) !important;
+  box-shadow: 12px 12px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .adapt:active {
+  transform: translate(2px, 2px) scale(0.99) !important;
+  box-shadow: 4px 4px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .adapt h3 {
+  font-size: clamp(22px, 2.6vw, 34px);
+}
+
+.ip .adapt p {
+  margin-top: 10px;
+}
+
+/* Scorecard */
+.ip .score {
+  background: var(--w);
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+  padding: 28px;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+
+.ip .score:hover {
+  transform: translateY(-8px) scale(1.018) !important;
+  box-shadow: 12px 12px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .score:active {
+  transform: translate(2px, 2px) scale(0.99) !important;
+  box-shadow: 4px 4px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .bar {
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.ip .bar label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.ip .bar label b {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13.5px;
+  color: var(--orange);
+}
+
+.ip .bar.t label b {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.ip .bar div {
+  height: 14px;
+  border: 2px solid var(--ink);
+  margin-top: 4px;
+  background: var(--w);
+  overflow: hidden;
+  position: relative;
+}
+
+/* DYNAMIC LEVEL ANIMATION: Fills from 0 to target value on scroll into view */
+.ip .bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--red);
+  transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: width;
+}
+
+.ip .bar.t span {
+  background: var(--ink);
+}
+
+.ip section.is-visible .score .bar:nth-child(1) span { width: 80%; transition-delay: 0.15s; }
+.ip section.is-visible .score .bar:nth-child(2) span { width: 90%; transition-delay: 0.28s; }
+.ip section.is-visible .score .bar:nth-child(3) span { width: 60%; transition-delay: 0.41s; }
+.ip section.is-visible .score .bar:nth-child(4) span { width: 75%; transition-delay: 0.54s; }
+.ip section.is-visible .score .bar:nth-child(5) span { width: 76%; transition-delay: 0.67s; }
+
+.ip .score h4 {
+  margin: 16px 0 2px;
+  font-size: 14px;
+}
+
+.ip .score p {
+  font-size: 13.5px;
+  color: #444;
+}
+
+/* ── 10. SKILL GAPS SECTION ──────────────────────────────────────────────── */
+.ip .gap {
+  display: inline-block;
+  font-family: 'Anton', Impact, sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(16px, 1.9vw, 22px);
+  padding: 8px 16px;
+  margin: 6px 8px 6px 0;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.ip .gap:hover {
+  transform: translateY(-8px) scale(1.04) rotate(0deg) !important;
+  box-shadow: 7px 7px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .gap:active {
+  transform: translateY(2px) scale(0.98) !important;
+  box-shadow: 2px 2px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+/* ── 11. ROADMAP TABLE DYNAMIC LEVEL ANIMATION ───────────────────────────── */
+.ip .tbl {
+  border: 3px solid var(--ink);
+  background: var(--w);
+  margin-top: 28px;
+  overflow-x: auto;
+  box-shadow: 6px 6px 0 var(--ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ip .tbl:hover {
+  transform: translateY(-2px);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.ip .tbl table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ip .tbl th {
+  background: var(--ink);
+  color: var(--bg);
+  text-align: left;
+  padding: 14px 18px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ip .tbl td {
+  padding: 14px 18px;
+  border-top: 2px solid var(--ink);
+  transition: background 0.15s ease;
+}
+
+.ip .tbl tr:hover td {
+  background: rgba(244, 207, 99, 0.15);
+}
+
+.ip .pb {
+  width: 140px;
+  height: 14px;
+  border: 2px solid var(--ink);
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  background: var(--w);
+}
+
+.ip .pb i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--red);
+  transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: width;
+}
+
+.ip section.is-visible .tbl tbody tr:nth-child(1) .pb i { width: 70%; transition-delay: 0.2s; }
+.ip section.is-visible .tbl tbody tr:nth-child(2) .pb i { width: 40%; transition-delay: 0.35s; }
+.ip section.is-visible .tbl tbody tr:nth-child(3) .pb i { width: 10%; transition-delay: 0.5s; }
+
+.ip .pb-pct {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.ip .hist {
+  background: var(--yellow);
+  border-block: 3px solid var(--ink);
+}
+
+/* STEP 1: Heading upward movement + opacity reveal + subtle scale pop */
+.ip .hist h2 {
+  opacity: 0;
+  transform: translateY(18px) scale(0.97);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible.hist h2,
+.ip section.is-visible .hist h2 {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 0.05s;
+}
+
+/* STEP 2: Description appears shortly after */
+.ip .hist p {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible.hist p,
+.ip section.is-visible .hist p {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.16s;
+}
+
+/* STEP 3: Individual cards/chips appear ONE BY ONE from left to right */
+.ip .hist .tags .tag {
+  opacity: 0;
+  transform: translateY(18px) scale(0.95);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  will-change: opacity, transform;
+  cursor: pointer;
+}
+
+/* Sequential stagger from left to right */
+.ip section.is-visible.hist .tags .tag:nth-child(1),
+.ip section.is-visible .hist .tags .tag:nth-child(1) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.10s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(2),
+.ip section.is-visible .hist .tags .tag:nth-child(2) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.16s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(3),
+.ip section.is-visible .hist .tags .tag:nth-child(3) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.22s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(4),
+.ip section.is-visible .hist .tags .tag:nth-child(4) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.28s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(5),
+.ip section.is-visible .hist .tags .tag:nth-child(5) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.34s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(6),
+.ip section.is-visible .hist .tags .tag:nth-child(6) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.40s; }
+
+.ip section.is-visible.hist .tags .tag:nth-child(7),
+.ip section.is-visible .hist .tags .tag:nth-child(7) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.46s; }
+
+/* Immediate responsive hover pop-up */
+.ip .hist .tags .tag:hover {
+  transform: translateY(-8px) scale(1.04) !important;
+  box-shadow: 6px 6px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .hist .tags .tag:active {
+  transform: translateY(2px) scale(0.97) !important;
+  box-shadow: 2px 2px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+/* ── 12. WHY INTERVIEWPILOT SECTION ──────────────────────────────────────── */
+.ip .no {
+  font-family: 'Anton', Impact, sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(18px, 2.3vw, 28px);
+  text-decoration: line-through;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 4px;
+  margin-top: 14px;
+  transition: transform 0.2s ease;
+}
+
+.ip .no:hover {
+  transform: translateX(6px);
+}
+
+.ip .yes {
+  font-family: 'Anton', Impact, sans-serif;
+  text-transform: uppercase;
+  font-size: clamp(30px, 4.2vw, 56px);
+  line-height: 1.05;
+}
+
+.ip .yes .p {
+  color: var(--red);
+}
+
+/* ── 13. THE COMPLETE JOURNEY (SEQUENTIAL PIPELINE MOTION) ────────────────── */
+.ip .flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 10px;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.ip .flow .node {
+  opacity: 0.25;
+  transform: translateY(14px) scale(0.96);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  will-change: opacity, transform;
+  box-shadow: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.ip .flow .node:hover {
+  transform: translateY(-8px) scale(1.04) !important;
+  box-shadow: 5px 5px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .flow .node:active {
+  transform: translateY(2px) scale(0.97) !important;
+  box-shadow: 1px 1px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .flow .arr {
+  text-decoration: none;
+  font-size: 20px;
+  display: inline-block;
+  opacity: 0.2;
+  transform: translateX(-4px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Sequential journey activation */
+.ip section.is-visible .flow .node:nth-child(1) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.04s; }
+.ip section.is-visible .flow .arr:nth-child(2)  { opacity: 1; transform: translateX(0); transition-delay: 0.09s; }
+.ip section.is-visible .flow .node:nth-child(3) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.14s; }
+.ip section.is-visible .flow .arr:nth-child(4)  { opacity: 1; transform: translateX(0); transition-delay: 0.19s; }
+.ip section.is-visible .flow .node:nth-child(5) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.24s; }
+.ip section.is-visible .flow .arr:nth-child(6)  { opacity: 1; transform: translateX(0); transition-delay: 0.29s; }
+.ip section.is-visible .flow .node:nth-child(7) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.34s; }
+.ip section.is-visible .flow .arr:nth-child(8)  { opacity: 1; transform: translateX(0); transition-delay: 0.39s; }
+.ip section.is-visible .flow .node:nth-child(9) { opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.44s; }
+.ip section.is-visible .flow .arr:nth-child(10) { opacity: 1; transform: translateX(0); transition-delay: 0.49s; }
+.ip section.is-visible .flow .node:nth-child(11){ opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.54s; }
+.ip section.is-visible .flow .arr:nth-child(12) { opacity: 1; transform: translateX(0); transition-delay: 0.59s; }
+.ip section.is-visible .flow .node:nth-child(13){ opacity: 1; transform: translateY(0) scale(1); transition-delay: 0.64s; }
+
+.ip .ready {
+  font-family: 'Anton', Impact, sans-serif;
+  text-transform: uppercase;
+  background: var(--red);
+  color: var(--ink);
+  padding: 7px 16px;
+  font-size: 20px;
+  transform: rotate(-2deg);
+  display: inline-block;
+  animation: readyPulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes readyPulse {
+  0% { transform: rotate(-2deg) scale(1); }
+  100% { transform: rotate(-1.5deg) scale(1.06); }
+}
+
+/* ── 14. FINAL CTA BANNER (SEQUENTIAL POP-IN SCROLL REVEAL) ─────────────── */
+.ip .final {
+  background: var(--red);
+  text-align: center;
+  border-block: 3px solid var(--ink);
+}
+
+.ip .final h2 {
+  font-size: clamp(34px, 5.5vw, 72px);
+  line-height: 1.05;
+}
+
+.ip .final h2 span {
+  display: block;
+}
+
+/* STEP 1: Heading Line 1 */
+.ip .final .final-line-1 {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.58s cubic-bezier(0.16, 1, 0.3, 1), transform 0.58s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible.final .final-line-1,
+.ip section.is-visible .final .final-line-1 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.10s;
+}
+
+/* STEP 2: Heading Line 2 */
+.ip .final .final-line-2 {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.58s cubic-bezier(0.16, 1, 0.3, 1), transform 0.58s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible.final .final-line-2,
+.ip section.is-visible .final .final-line-2 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.29s;
+}
+
+/* STEP 3: Supporting Description */
+.ip .final .final-desc {
+  margin: 16px auto 28px;
+  max-width: 480px;
+  font-size: 16.5px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.58s cubic-bezier(0.16, 1, 0.3, 1), transform 0.58s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.ip section.is-visible.final .final-desc,
+.ip section.is-visible .final .final-desc {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.48s;
+}
+
+/* STEP 4: Start Your Interview Button */
+@keyframes finalBtnEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ip .final .final-btn {
+  box-shadow: 5px 5px 0 var(--bg);
+  opacity: 0;
+  transform: translateY(0);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  transition-delay: 0s;
+  will-change: transform, box-shadow;
+  cursor: pointer;
+}
+
+.ip section.is-visible.final .final-btn,
+.ip section.is-visible .final .final-btn {
+  opacity: 1;
+  transform: translateY(0);
+  animation: finalBtnEntrance 0.58s cubic-bezier(0.16, 1, 0.3, 1) 0.67s backwards;
+}
+
+/* Hover: simple CSS hover interaction, lifts 5px with scale 1.02 and deeper shadow */
+.ip .final .final-btn:hover {
+  transform: translateY(-5px) scale(1.02) !important;
+  box-shadow: 8px 8px 0 var(--bg) !important;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease !important;
+  transition-delay: 0s !important;
+}
+
+.ip .final .final-btn:hover em {
+  transform: translateX(4px) scale(1.08);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: 0s !important;
+}
+
+.ip .final .final-btn:active {
+  transform: translate(2px, 2px) scale(0.99) !important;
+  box-shadow: 2px 2px 0 var(--bg) !important;
+  transition-delay: 0s !important;
+}
+
+/* ── 15. FAQ ACCORDION ──────────────────────────────────────────────────── */
+.ip .faq {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 36px;
+  align-items: start;
+}
+
+.ip section:not(.hero) .faq details {
+  opacity: 0.15;
+  transform: translateY(18px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+
+.ip section.is-visible .faq details:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(2) { transition-delay: 0.12s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(3) { transition-delay: 0.19s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(4) { transition-delay: 0.26s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(5) { transition-delay: 0.33s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(6) { transition-delay: 0.40s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(7) { transition-delay: 0.47s; opacity: 1; transform: translateY(0); }
+.ip section.is-visible .faq details:nth-child(8) { transition-delay: 0.54s; opacity: 1; transform: translateY(0); }
+
+.ip details {
+  background: var(--w);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+}
+
+.ip details:hover {
+  transform: translateY(-8px) scale(1.015) !important;
+  box-shadow: 10px 10px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip details:active {
+  transform: translateY(2px) scale(0.99) !important;
+  box-shadow: 4px 4px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 18px 20px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ip summary::-webkit-details-marker {
+  display: none;
+}
+
+.ip summary::after {
+  content: "+";
+  color: var(--red);
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.18s ease;
+}
+
+.ip details[open] summary::after {
+  content: "–";
+}
+
+.ip details p {
+  padding: 0 20px 18px;
+  font-size: 15px;
+}
+
+/* ── 16. TAGS & BADGES ──────────────────────────────────────────────────── */
+.ip .tag {
+  display: inline-block;
+  border: 2px solid var(--ink);
+  background: var(--w);
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease, background-color 0.18s ease;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.ip .tag:hover {
+  transform: translateY(-8px) scale(1.04) !important;
+  box-shadow: 6px 6px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .tag:active {
+  transform: translateY(2px) scale(0.97) !important;
+  box-shadow: 1px 1px 0 var(--ink) !important;
+  transition-delay: 0s !important;
+}
+
+.ip .tags .tag:nth-child(even):hover {
+  transform: translate(-2px, -3px) rotate(-1.5deg);
+}
+
+.ip .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.ip .y { background: var(--yellow); }
+.ip .r { background: var(--red); }
+.ip .o { background: var(--orange); }
+.ip .k { background: var(--ink); color: var(--bg); }
+
+/* ── 17. FOOTER ──────────────────────────────────────────────────────────── */
+.ip footer {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 56px var(--pad) 32px;
+}
+
+.ip footer .in {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+
+.ip footer h3 {
+  font-size: 24px;
+}
+
+.ip footer p {
+  max-width: 320px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.ip footer .fl {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.ip footer .fl a {
+  transition: color 0.18s ease;
+}
+
+.ip footer .fl a:hover {
+  color: var(--orange);
+}
+
+.ip footer small {
+  display: block;
+  max-width: 1250px;
+  margin: 36px auto 0;
+  color: #bbb;
+}
+
+/* ── 18. RESPONSIVE RULES ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .ip .links {
+    display: none;
+  }
+
+  .ip .hero, .ip .what, .ip .two, .ip .why {
+    grid-template-columns: 1fr;
+  }
+
+  .ip .hero {
+    min-height: auto;
+    padding-top: 36px;
+    padding-bottom: 48px;
+  }
+
+  .ip section:not(.hero) {
+    min-height: auto;
+    padding: 72px var(--pad);
+  }
+
+  .ip .bubble {
+    align-self: center;
+    margin-left: 0;
+    margin-bottom: 12px;
+    transform: rotate(-2deg);
+  }
+
+  .ip .five {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ip .faq {
+    grid-template-columns: 1fr;
+  }
+
+  .ip .c2 {
+    margin-left: 12px;
+  }
+
+  .ip .navr .lg {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .ip .five {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 19. ACCESSIBILITY: PREFERS REDUCED MOTION ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ip * {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+
+  .ip section:not(.hero) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .ip .what > h2,
+  .ip .two > div:first-child,
+  .ip .why > div:first-child,
+  .ip .what > div,
+  .ip .two > div:last-child,
+  .ip .why > div:last-child {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .ip section.is-visible .score .bar span,
+  .ip section.is-visible .tbl tbody tr .pb i {
+    transition: none !important;
+  }
+
+  .ip .dark .five > div {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
