@@ -94,16 +94,23 @@ export default function LoginPage({
       const dest = location.state?.from?.pathname || '/dashboard';
       navigate(dest, { replace: true });
     } catch (err) {
+      const errStatus = err?.response?.status;
       const errData = err?.response?.data?.error;
       const detailMsg = errData?.details && Array.isArray(errData.details) && errData.details.length > 0
         ? errData.details.map((d) => d.message).filter(Boolean).join('. ')
         : null;
+
+      let fallbackMsg = 'Could not sign you in. Please check your credentials.';
+      if (errStatus === 502 || errStatus === 503 || errStatus === 504 || err?.message?.includes('502')) {
+        fallbackMsg = 'The server is waking up from idle. Please try again in a few seconds.';
+      }
+
       setError(
         detailMsg ||
         errData?.message ||
         err?.response?.data?.message ||
-        err?.message ||
-        'Could not sign you in. Please check your credentials.'
+        (err?.message && !err.message.includes('502') ? err.message : null) ||
+        fallbackMsg
       );
     } finally {
       setLoading(false);

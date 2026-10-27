@@ -102,16 +102,23 @@ export default function RegisterPage({ loginHref = '/login', homeHref = '/' }) {
       setAuth(token, user);
       navigate('/dashboard', { replace: true });
     } catch (err) {
+      const errStatus = err?.response?.status;
       const errData = err?.response?.data?.error;
       const detailMsg = errData?.details && Array.isArray(errData.details) && errData.details.length > 0
         ? errData.details.map((d) => d.message).filter(Boolean).join('. ')
         : null;
+
+      let fallbackMsg = 'Could not create your account. Please try again.';
+      if (errStatus === 502 || errStatus === 503 || errStatus === 504 || err?.message?.includes('502')) {
+        fallbackMsg = 'The server is waking up from idle. Please click Create account again in a few seconds.';
+      }
+
       setError(
         detailMsg ||
         errData?.message ||
         err?.response?.data?.message ||
-        err?.message ||
-        'Could not create your account. Please try again.'
+        (err?.message && !err.message.includes('502') ? err.message : null) ||
+        fallbackMsg
       );
     } finally {
       setLoading(false);
