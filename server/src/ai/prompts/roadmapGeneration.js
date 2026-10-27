@@ -35,11 +35,11 @@ CRITICAL INSTRUCTIONS:
    - Prioritize topics where the candidate showed clear skill gaps, faltered under technical depth, or missed critical trade-offs.
 3. Focus on Diagnosed Weaknesses: The roadmap must directly address the candidate's diagnosed weaknesses and lower-scoring topics.
 4. Topics Structure:
-   - Generate between 3 and 6 structured roadmap topics.
+   - Generate between 3 and 4 structured roadmap topics (high-impact, focused curriculum).
    - Assign priority ("high", "medium", "low") appropriately. High priority topics should address the most critical skill gaps or topics with the lowest scores.
-   - Assign 2 to 4 high-quality, practical learning resources per topic.
+   - Assign exactly 2 high-quality, practical learning resources per topic.
    - Resource types must strictly be one of: "article", "video", or "problem".
-   - Include realistic estimated completion times (e.g., "45 mins", "1 hour", "2.5 hours").
+   - Include realistic estimated completion times (e.g., "45 mins", "1 hour", "2 hours").
    - Resource URLs must be real, valid web references (e.g. official documentation, MDN, well-known guides, system design primers, LeetCode / NeetCode, or standard tutorial repositories).
 
 OUTPUT FORMAT REQUIREMENT:
@@ -48,7 +48,7 @@ You must respond with valid JSON and ONLY valid JSON matching this schema:
   "topics": [
     {
       "title": "Title of the topic (e.g., PostgreSQL Connection Pool Optimization & PgBouncer)",
-      "description": "Substantive 2-4 sentence description explaining the key architectural concepts, failure modes, trade-offs, and practical skills the candidate must master.",
+      "description": "Substantive 2-sentence description explaining the key architectural concepts, trade-offs, and practical skills the candidate must master.",
       "priority": "high",
       "resources": [
         {
@@ -73,7 +73,7 @@ Guidelines:
 - "title" must be concise and descriptive (at least 5 characters).
 - "description" must be actionable and detailed (at least 30 characters).
 - "priority" must strictly be one of: "high", "medium", "low".
-- "resources" array must contain 2 to 4 items.
+- "resources" array must contain 2 items.
 - "resources[].type" must strictly be one of: "article", "video", "problem".`;
 
   // Format topic scores summary

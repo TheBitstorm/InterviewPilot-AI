@@ -11,6 +11,9 @@ const {
   validateReportAnalysis,
 } = require('../../ai/prompts/reportAnalysis');
 
+// In-flight deduplication map: sessionId -> Promise<{ report, generated, metrics }>
+const inflightReports = new Map();
+
 /**
  * Generate a comprehensive interview report for a completed interview session.
  *
@@ -18,14 +21,21 @@ const {
  * 1. Verifies session ownership.
  * 2. Enforces that ALL questions in the session have a persisted UserAnswer AND AIFeedback.
  * 3. Idempotent: If report already exists for the session, returns existing report with generated: false.
- * 4. Deterministic metrics (overallScore, topicScores, answeredCount, totalDuration) are computed in code/DB.
- * 5. Gemini is invoked only for qualitative analysis (executive summary, strengths, weaknesses, skill gap recommendations).
- * 6. Persists Report in PostgreSQL and marks InterviewSession as 'completed'.
+ * 4. In-flight deduplication: reuses running generation Promise if called concurrently.
+ * 5. Deterministic metrics (overallScore, topicScores, answeredCount, totalDuration) are computed in code/DB.
+ * 6. Gemini is invoked only for qualitative analysis (executive summary, strengths, weaknesses, skill gap recommendations).
+ * 7. Persists Report in PostgreSQL and marks InterviewSession as 'completed'.
  *
  * @param {string} sessionId
  * @param {string} userId
  */
 const generateSessionReport = async (sessionId, userId) => {
+  // If a report generation request is already in-flight for this session, attach to it
+  if (inflightReports.has(sessionId)) {
+    return await inflightReports.get(sessionId);
+  }
+
+  const generationPromise = (async () => {
   // 1. Fetch the session with all required relations
   const session = await prisma.interviewSession.findUnique({
     where: { id: sessionId },
@@ -145,6 +155,7 @@ const generateSessionReport = async (sessionId, userId) => {
   try {
     rawAiResponse = await chat(messages, {
       responseFormat: { type: 'json_object' },
+      maxTokens: 1000,
     });
   } catch (err) {
     console.error('Error contacting Gemini AI for report analysis:', err.message);
@@ -212,6 +223,14 @@ const generateSessionReport = async (sessionId, userId) => {
   });
 
   return result;
+  })();
+
+  inflightReports.set(sessionId, generationPromise);
+  try {
+    return await generationPromise;
+  } finally {
+    inflightReports.delete(sessionId);
+  }
 };
 
 /**

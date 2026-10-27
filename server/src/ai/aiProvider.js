@@ -14,12 +14,10 @@ const openai = new OpenAI({
   maxRetries: 0,
 });
 
-// Verified active, fast Gemini models for immediate failover if one hits quota or status 503/404
+// Verified active, fast Gemini models on this endpoint
 const FALLBACK_MODELS = [
   'gemini-3.5-flash-lite',
-  'gemini-3.5-flash',
   'gemini-flash-lite-latest',
-  'gemini-3.1-flash-lite',
 ];
 
 /**
@@ -27,17 +25,17 @@ const FALLBACK_MODELS = [
  *
  * @param {Array<{role: string, content: string}>} messages - Chat history / messages
  * @param {object} options - Optional overrides
- * @param {string} options.model - Model name (default: gemini-3.5-flash)
+ * @param {string} options.model - Model name (default: gemini-3.5-flash-lite)
  * @param {number} options.temperature - 0.0 – 1.0 (default: 0.7)
- * @param {number} options.maxTokens - Max response tokens (default: 2000)
+ * @param {number} options.maxTokens - Max response tokens (default: 1500)
  * @param {object} options.responseFormat - Optional response_format object e.g. { type: 'json_object' }
  * @returns {Promise<string>} The AI's text response
  */
 const chat = async (messages, options = {}) => {
   const {
-    model = env.GEMINI_MODEL || 'gemini-3.5-flash',
+    model = env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
     temperature = 0.7,
-    maxTokens = 2000,
+    maxTokens = 1500,
     responseFormat,
   } = options;
 

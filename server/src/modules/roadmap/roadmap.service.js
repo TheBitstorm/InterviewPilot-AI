@@ -32,15 +32,18 @@ const computeRoadmapMetrics = (topics = []) => {
   };
 };
 
+// In-flight deduplication map: reportId -> Promise<{ roadmap, generated }>
+const inflightRoadmaps = new Map();
+
 /**
  * Generate a personalized learning roadmap from an existing, completed interview report.
  *
  * Requirements:
  * 1. Verifies report exists and belongs to the authenticated user.
  * 2. Checks if a roadmap already exists for the report (idempotency).
- * 3. If exists, returns the existing roadmap with generated: false without invoking Gemini.
- * 4. If not exists, calls Gemini once with report context and validates with Zod.
- * 5. Atomically creates LearningRoadmap + RoadmapTopic + TopicResource records via a Prisma transaction.
+ * 3. In-flight deduplication: reuses running generation Promise if called concurrently.
+ * 4. Calls Gemini once with report context, validated with Zod.
+ * 5. Atomically creates LearningRoadmap + RoadmapTopic + TopicResource in a single nested create.
  *
  * @param {string} reportId - Source Report ID
  * @param {string} userId - Authenticated User ID
@@ -51,126 +54,43 @@ const generateRoadmapFromReport = async (reportId, userId) => {
     throw new AppError('reportId is required.', 400);
   }
 
-  // 1. Fetch source report with session context
-  const report = await prisma.report.findUnique({
-    where: { id: reportId },
-    include: {
-      session: {
-        select: {
-          id: true,
-          roleTarget: true,
-          status: true,
-          type: true,
-          difficulty: true,
-        },
-      },
-    },
-  });
-
-  if (!report) {
-    throw new AppError('Interview report not found.', 404);
+  // If a roadmap generation request is already in-flight for this report, attach to it
+  if (inflightRoadmaps.has(reportId)) {
+    return await inflightRoadmaps.get(reportId);
   }
 
-  // 2. Ownership verification
-  if (report.userId !== userId) {
-    throw new AppError('You do not have permission to access this report.', 403);
-  }
-
-  // 3. Idempotency Check: if roadmap already exists for this report + user, return it
-  const existingRoadmap = await prisma.learningRoadmap.findFirst({
-    where: {
-      sourceReportId: reportId,
-      userId,
-    },
-    include: {
-      topics: {
-        include: { resources: true },
-        orderBy: { orderIndex: 'asc' },
-      },
-      sourceReport: {
-        select: {
-          id: true,
-          overallScore: true,
-          summary: true,
-          generatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (existingRoadmap) {
-    const metrics = computeRoadmapMetrics(existingRoadmap.topics);
-    return {
-      roadmap: {
-        ...existingRoadmap,
-        metrics,
-      },
-      generated: false,
-    };
-  }
-
-  // 4. Build prompt and call Gemini for roadmap synthesis
-  const roleTarget = report.session?.roleTarget || 'Software Engineer';
-  const messages = buildRoadmapGenerationPrompt({
-    targetRole: roleTarget,
-    overallScore: report.overallScore,
-    strengths: report.strengths || [],
-    weaknesses: report.weaknesses || [],
-    topicScores: report.topicScores || [],
-    recommendation: report.recommendation || '',
-  });
-
-  let rawAiResponse;
-  try {
-    rawAiResponse = await chat(messages, {
-      responseFormat: { type: 'json_object' },
-    });
-  } catch (err) {
-    console.error('Error contacting Gemini AI for roadmap generation:', err.message);
-    throw new AppError('Failed to generate learning roadmap from AI. Please try again.', 502);
-  }
-
-  // 5. Validate Gemini output against Zod schema
-  const parsedJson = parseRoadmapAIJson(rawAiResponse);
-  const validatedData = validateRoadmapAIResponse(parsedJson);
-
-  // 6. Atomic database transaction to persist Roadmap, Topics, and Resources
-  const result = await prisma.$transaction(async (tx) => {
-    // Create parent roadmap
-    const createdRoadmap = await tx.learningRoadmap.create({
-      data: {
-        userId,
-        roleTarget,
-        sourceReportId: reportId,
-      },
-    });
-
-    // Create topics with sequential orderIndex and their nested resources
-    for (let i = 0; i < validatedData.topics.length; i++) {
-      const topicData = validatedData.topics[i];
-      await tx.roadmapTopic.create({
-        data: {
-          roadmapId: createdRoadmap.id,
-          title: topicData.title,
-          description: topicData.description,
-          priority: topicData.priority,
-          orderIndex: i,
-          status: 'not_started',
-          resources: {
-            create: topicData.resources.map((res) => ({
-              title: res.title,
-              url: res.url,
-              type: res.type,
-              estimatedTime: res.estimatedTime,
-            })),
+  const generationPromise = (async () => {
+    // 1. Fetch source report with session context
+    const report = await prisma.report.findUnique({
+      where: { id: reportId },
+      include: {
+        session: {
+          select: {
+            id: true,
+            roleTarget: true,
+            status: true,
+            type: true,
+            difficulty: true,
           },
         },
-      });
+      },
+    });
+
+    if (!report) {
+      throw new AppError('Interview report not found.', 404);
     }
 
-    // Return complete roadmap with topics and resources
-    const fullRoadmap = await tx.learningRoadmap.findUnique({
-      where: { id: createdRoadmap.id },
+    // 2. Ownership verification
+    if (report.userId !== userId) {
+      throw new AppError('You do not have permission to access this report.', 403);
+    }
+
+    // 3. Idempotency Check: if roadmap already exists for this report + user, return it
+    const existingRoadmap = await prisma.learningRoadmap.findFirst({
+      where: {
+        sourceReportId: reportId,
+        userId,
+      },
       include: {
         topics: {
           include: { resources: true },
@@ -187,18 +107,100 @@ const generateRoadmapFromReport = async (reportId, userId) => {
       },
     });
 
-    return fullRoadmap;
-  });
+    if (existingRoadmap) {
+      const metrics = computeRoadmapMetrics(existingRoadmap.topics);
+      return {
+        roadmap: {
+          ...existingRoadmap,
+          metrics,
+        },
+        generated: false,
+      };
+    }
 
-  const metrics = computeRoadmapMetrics(result.topics);
+    // 4. Build prompt and call Gemini for roadmap synthesis
+    const roleTarget = report.session?.roleTarget || 'Software Engineer';
+    const messages = buildRoadmapGenerationPrompt({
+      targetRole: roleTarget,
+      overallScore: report.overallScore,
+      strengths: report.strengths || [],
+      weaknesses: report.weaknesses || [],
+      topicScores: report.topicScores || [],
+      recommendation: report.recommendation || '',
+    });
 
-  return {
-    roadmap: {
-      ...result,
-      metrics,
-    },
-    generated: true,
-  };
+    let rawAiResponse;
+    try {
+      rawAiResponse = await chat(messages, {
+        responseFormat: { type: 'json_object' },
+        maxTokens: 1200,
+      });
+    } catch (err) {
+      console.error('Error contacting Gemini AI for roadmap generation:', err.message);
+      throw new AppError('Failed to generate learning roadmap from AI. Please try again.', 502);
+    }
+
+    // 5. Validate Gemini output against Zod schema
+    const parsedJson = parseRoadmapAIJson(rawAiResponse);
+    const validatedData = validateRoadmapAIResponse(parsedJson);
+
+    // 6. Optimized single-roundtrip nested create for Roadmap, Topics, and Resources
+    const fullRoadmap = await prisma.learningRoadmap.create({
+      data: {
+        userId,
+        roleTarget,
+        sourceReportId: reportId,
+        topics: {
+          create: validatedData.topics.map((topicData, i) => ({
+            title: topicData.title,
+            description: topicData.description,
+            priority: topicData.priority,
+            orderIndex: i,
+            status: 'not_started',
+            resources: {
+              create: topicData.resources.map((res) => ({
+                title: res.title,
+                url: res.url,
+                type: res.type,
+                estimatedTime: res.estimatedTime,
+              })),
+            },
+          })),
+        },
+      },
+      include: {
+        topics: {
+          include: { resources: true },
+          orderBy: { orderIndex: 'asc' },
+        },
+        sourceReport: {
+          select: {
+            id: true,
+            overallScore: true,
+            summary: true,
+            generatedAt: true,
+          },
+        },
+      },
+    });
+
+    const metrics = computeRoadmapMetrics(fullRoadmap.topics);
+
+    return {
+      roadmap: {
+        ...fullRoadmap,
+        metrics,
+      },
+      generated: true,
+    };
+  })();
+
+  inflightRoadmaps.set(reportId, generationPromise);
+  try {
+    return await generationPromise;
+  } finally {
+    inflightRoadmaps.delete(reportId);
+  }
 };
 
 /**

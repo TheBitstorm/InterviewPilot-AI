@@ -329,6 +329,9 @@ const generateSessionQuestions = async (sessionId, userId, requestedCount) => {
   }
 };
 
+// In-flight deduplication map: `${sessionId}:${questionId}` -> Promise
+const inflightEvaluations = new Map();
+
 /**
  * Submit candidate answer for a specific question, evaluate via Gemini, and persist feedback.
  *
@@ -351,6 +354,12 @@ const submitAndEvaluateAnswer = async (sessionId, userId, bodyOrQuestionId, mayb
     timeTaken = maybeTimeTaken;
   }
 
+  const inflightKey = `${sessionId}:${questionId}`;
+  if (inflightEvaluations.has(inflightKey)) {
+    return await inflightEvaluations.get(inflightKey);
+  }
+
+  const evaluationPromise = (async () => {
   // 1. Verify session exists, belongs to user, and is active
   const session = await prisma.interviewSession.findUnique({
     where: { id: sessionId },
@@ -429,7 +438,7 @@ const submitAndEvaluateAnswer = async (sessionId, userId, bodyOrQuestionId, mayb
   try {
     rawAiResponse = await chat(messages, {
       responseFormat: { type: 'json_object' },
-      maxTokens: 750,
+      maxTokens: 500,
     });
   } catch (err) {
     console.error('Error contacting Gemini AI for evaluation:', err.message);
@@ -528,14 +537,22 @@ const submitAndEvaluateAnswer = async (sessionId, userId, bodyOrQuestionId, mayb
   console.log(`[Timing:AnswerEvaluation:DB] Evaluation DB persistence completed in ${dbDuration}ms`);
   console.log(`[Timing:AnswerEvaluation:Total] Total answer evaluation took ${totalDuration}ms`);
 
-  return {
-    ...result,
-    timings: {
-      aiMs: aiDuration,
-      dbMs: dbDuration,
-      totalMs: totalDuration,
-    },
-  };
+    return {
+      ...result,
+      timings: {
+        aiMs: aiDuration,
+        dbMs: dbDuration,
+        totalMs: totalDuration,
+      },
+    };
+  })();
+
+  inflightEvaluations.set(inflightKey, evaluationPromise);
+  try {
+    return await evaluationPromise;
+  } finally {
+    inflightEvaluations.delete(inflightKey);
+  }
 };
 
 module.exports = {

@@ -3,7 +3,7 @@
 // Visually unified with the warm cream, black, and orange design system (Landing Page, Dashboard, New Interview, Performance Analysis).
 // Preserves 100% of existing roadmapService, auto-generation flow, topic status updates, optimistic metrics, filters, and resource links.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { roadmapService } from '../services/roadmapService';
@@ -775,6 +775,7 @@ export default function RoadmapPage() {
   const [error, setError] = useState('');
   const [updatingTopicId, setUpdatingTopicId] = useState(null);
   const [filterPriority, setFilterPriority] = useState('all'); // 'all' | 'high' | 'pending' | 'done'
+  const isGeneratingRef = useRef(false);
 
   const user = {
     name: rawUser?.name || 'Candidate',
@@ -814,6 +815,9 @@ export default function RoadmapPage() {
         }
 
         // Step 2: If not found, attempt to generate roadmap for this Report ID
+        // Guard against duplicate concurrent calls in React StrictMode
+        if (isGeneratingRef.current) return;
+        isGeneratingRef.current = true;
         setGenerating(true);
         const genRes = await roadmapService.generate({ reportId: id });
         if (!mounted) return;
@@ -828,6 +832,7 @@ export default function RoadmapPage() {
           'Failed to load or generate personalized learning roadmap.';
         setError(msg);
       } finally {
+        isGeneratingRef.current = false;
         if (mounted) {
           setLoading(false);
           setGenerating(false);
@@ -906,6 +911,19 @@ export default function RoadmapPage() {
               ? 'Gemini AI is analyzing your mock interview diagnostics to formulate targeted curriculum modules and curated study resources.'
               : 'Retrieving your curated study curriculum and progress metrics.'}
           </p>
+          {generating && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginTop: 14 }}>
+              <span style={{ fontSize: 12, padding: '4px 10px', background: '#fff', border: '1px solid var(--line)', borderRadius: 20, color: 'var(--muted)', fontWeight: 600 }}>
+                ✓ Skill Gaps Analyzed
+              </span>
+              <span style={{ fontSize: 12, padding: '4px 10px', background: 'var(--yellow)', border: '1px solid #D1AF43', borderRadius: 20, color: 'var(--ink)', fontWeight: 600 }}>
+                ⚡ Structuring Curriculum
+              </span>
+              <span style={{ fontSize: 12, padding: '4px 10px', background: '#fff', border: '1px solid var(--line)', borderRadius: 20, color: 'var(--muted)', fontWeight: 600 }}>
+                Curating Practice Resources
+              </span>
+            </div>
+          )}
         </div>
       </div>
     );

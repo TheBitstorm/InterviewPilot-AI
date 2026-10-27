@@ -27,10 +27,10 @@ const buildAnswerEvaluationPrompt = ({
 }) => {
   const systemPrompt = `You are a principal hiring bar-raiser evaluating a candidate's answer for a ${targetRole} role (${interviewType} interview, ${difficulty} difficulty).
 
-Evaluation dimensions:
+Evaluation dimensions (keep feedback concise, direct, and high-signal):
 1. Technical Correctness & Depth: Accuracy of concepts, strengths observed, missing edge cases/trade-offs, and a concise 2-sentence model answer benchmark.
-2. Communication & Clarity: Structure, articulation, conciseness, and delivery.
-3. Actionable Improvements: 2 to 4 concrete, high-impact suggestions.
+2. Communication & Clarity: Structure, articulation, conciseness, and delivery (1-2 sentences).
+3. Actionable Improvements: Exactly 2 to 3 concrete, high-impact suggestions.
 4. Calibrated Score (0.0 to 10.0, 1 decimal place): Calibrated against ${difficulty} difficulty for a ${targetRole}.
 
 Output format requirement:

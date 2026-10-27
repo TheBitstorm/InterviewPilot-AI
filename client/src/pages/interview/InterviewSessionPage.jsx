@@ -566,6 +566,45 @@ export default function InterviewSessionPage({
           </div>
         </div>
 
+        {/* ── Generating Report Overlay ─────────────────────────────────────── */}
+        {generatingReport && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(242, 238, 230, 0.94)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: 24,
+            textAlign: 'center',
+          }}>
+            <div className="spinner" style={{ width: 48, height: 48, borderWidth: 3, marginBottom: 20 }} />
+            <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: 'var(--ink)' }}>
+              Synthesizing Executive Performance Report…
+            </h2>
+            <p style={{ color: 'var(--muted)', fontSize: 14.5, maxWidth: 480, margin: '0 0 20px', lineHeight: 1.55 }}>
+              Gemini AI is analyzing your responses across technical accuracy, communication clarity, and skill gaps.
+            </p>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span style={{ fontSize: 12, padding: '5px 12px', background: '#fff', border: '1px solid var(--line)', borderRadius: 20, color: 'var(--muted)', fontWeight: 600 }}>
+                ✓ Evaluations Aggregated
+              </span>
+              <span style={{ fontSize: 12, padding: '5px 12px', background: 'var(--yellow)', border: '1px solid #D1AF43', borderRadius: 20, color: 'var(--ink)', fontWeight: 600 }}>
+                ⚡ Formulating Strengths &amp; Skill Gaps
+              </span>
+              <span style={{ fontSize: 12, padding: '5px 12px', background: '#fff', border: '1px solid var(--line)', borderRadius: 20, color: 'var(--muted)', fontWeight: 600 }}>
+                Targeting Recommendations
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* ── Loading Initial Session State ─────────────────────────────────── */}
         {loading && (
           <div style={{ display: 'grid', placeItems: 'center', padding: '80px 0' }}>
@@ -872,6 +911,28 @@ export default function InterviewSessionPage({
                       )}
                     </button>
                   </div>
+
+                  {evaluating && (
+                    <div style={{
+                      marginTop: 14,
+                      padding: '12px 16px',
+                      background: '#fff',
+                      border: '1px solid var(--line)',
+                      borderRadius: 12,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      boxShadow: '0 2px 8px rgba(0,0,0,.03)',
+                    }}>
+                      <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2, flexShrink: 0 }} />
+                      <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.4 }}>
+                        <strong style={{ color: 'var(--ink)', display: 'block', marginBottom: 2 }}>
+                          Evaluating via Gemini AI…
+                        </strong>
+                        Analyzing technical correctness, communication clarity, and candidate scoring.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
