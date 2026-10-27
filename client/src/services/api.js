@@ -5,8 +5,11 @@
 
 import axios from 'axios';
 
+const rawBaseURL = import.meta.env.VITE_API_URL || '/api/v1';
+const baseURL = rawBaseURL.replace(/\/+$/, '');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 60000, // 60s — AI question generation can take longer under peak load
 });
