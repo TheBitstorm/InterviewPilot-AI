@@ -150,20 +150,33 @@ export default function InterviewHistoryPage({
         if (!mounted) return;
         setSessions(list);
 
-        // Fetch reports for completed sessions to display overall score
-        const completed = list.filter((s) => s.status === 'completed');
+        // Map reports directly from embedded session.report (0 extra queries)
         const reportMap = {};
-        await Promise.allSettled(
-          completed.map(async (s) => {
-            try {
-              const r = await reportService.getBySession(s.id);
-              const report = r.data?.data || r.data;
-              if (report) reportMap[s.id] = report;
-            } catch {
-              // No report yet — silent
+        const missingReports = [];
+
+        list.forEach((s) => {
+          if (s.report) {
+            reportMap[s.id] = s.report;
+          } else if (s.status === 'completed') {
+            missingReports.push(s.id);
+          }
+        });
+
+        // If any completed sessions lacked embedded reports, fetch all reports in a single query
+        if (missingReports.length > 0) {
+          try {
+            const allReportsRes = await reportService.getAll();
+            const allReports = allReportsRes.data?.data || allReportsRes.data || [];
+            if (Array.isArray(allReports)) {
+              allReports.forEach((r) => {
+                if (r.sessionId) reportMap[r.sessionId] = r;
+              });
             }
-          })
-        );
+          } catch {
+            // Non-critical: sessions will still render with available data
+          }
+        }
+
         if (mounted) setReports(reportMap);
       } catch (err) {
         if (mounted) {

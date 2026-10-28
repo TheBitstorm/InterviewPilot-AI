@@ -83,6 +83,14 @@ const getUserSessions = async (userId) => {
           fileName: true,
         },
       },
+      report: {
+        select: {
+          id: true,
+          overallScore: true,
+          summary: true,
+          generatedAt: true,
+        },
+      },
       _count: {
         select: { questions: true },
       },

@@ -5,8 +5,22 @@
 
 import axios from 'axios';
 
-const rawBaseURL = import.meta.env.VITE_API_URL || '/api/v1';
-const baseURL = rawBaseURL.replace(/\/+$/, '');
+// Determine the API base URL:
+// 1. Explicit VITE_API_URL if configured (e.g. from .env.production)
+// 2. Direct Render backend URL when running on production Vercel
+//    (bypasses Vercel's strict 8-10s rewrite timeout for Render cold starts & AI generation)
+// 3. Fallback to '/api/v1' for local dev with Vite proxy or custom environments
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://interviewpilot-api-man3.onrender.com/api/v1';
+  }
+  return '/api/v1';
+};
+
+const baseURL = getBaseURL();
 
 const api = axios.create({
   baseURL,
@@ -40,11 +54,13 @@ api.interceptors.response.use(
     const config = error.config;
     const status = error.response?.status;
 
-    // Retry once if gateway timeout/bad gateway occurs (Render cold start)
-    if (config && (status === 502 || status === 503 || status === 504) && !config._retryCount) {
-      config._retryCount = 1;
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      return api(config);
+    // Retry up to 2 times if gateway timeout/bad gateway occurs (Render cold start)
+    if (config && (status === 502 || status === 503 || status === 504)) {
+      config._retryCount = (config._retryCount || 0) + 1;
+      if (config._retryCount <= 2) {
+        await new Promise((resolve) => setTimeout(resolve, 3500));
+        return api(config);
+      }
     }
 
     const requestUrl = config?.url || '';
