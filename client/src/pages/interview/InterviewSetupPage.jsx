@@ -6,7 +6,7 @@
 // - Clean typography, consistent section padding, and refined Ready to Begin CTA.
 // - 100% preserves resumeService.getAll, resumeService.getActive, interviewService.create, and useAuthStore.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 import { resumeService } from '../../services/resumeService';
@@ -660,6 +660,112 @@ const STYLES = `
   font-weight: 500;
 }
 
+/* Explore All Roles Dropdown */
+.role-dropdown-wrap {
+  position: relative;
+  width: 100%;
+  margin-top: 14px;
+}
+.role-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  background: #FAF9F6;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all .15s ease;
+  text-align: left;
+}
+.role-dropdown-trigger:hover {
+  background: #F5F3ED;
+  border-color: rgba(10, 10, 10, 0.28);
+}
+.role-dropdown-trigger.active-role {
+  background: #FAF8F5;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+.role-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(10, 10, 10, 0.12), 0 2px 6px rgba(10, 10, 10, 0.04);
+  padding: 8px;
+  z-index: 100;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.role-search-box {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 6px 6px 10px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.role-search-input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 13.5px;
+  background: #FAF9F6;
+  color: var(--ink);
+  outline: none;
+}
+.role-search-input:focus {
+  border-color: var(--ink);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(10, 10, 10, 0.06);
+}
+.role-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s ease;
+}
+.role-dropdown-item:hover {
+  background: #FAF9F6;
+}
+.role-dropdown-item.selected {
+  background: rgba(10, 10, 10, 0.06);
+  font-weight: 700;
+}
+.role-dropdown-item.custom-opt {
+  color: #B45309;
+  border-top: 1px dashed var(--line);
+  margin-top: 4px;
+  padding-top: 10px;
+}
+
 @media (min-width: 1500px) {
   .d-main { max-width: 960px; padding-top: 48px; }
 }
@@ -715,19 +821,74 @@ const PATHS = {
   out: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
   upload: 'M12 16V4 M7 9l5-5 5 5 M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3',
   spark: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z',
+  search: 'M21 21l-4.35-4.35M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z',
+  chevronDown: 'M6 9l6 6 6-6',
 };
 
 const Icon = ({ name }) => (
   <svg className="i" viewBox="0 0 24 24" aria-hidden="true"><path d={PATHS[name]} /></svg>
 );
 
-const SUGGESTED_ROLES = [
-  'Full Stack Developer',
-  'Frontend Engineer',
-  'Backend Engineer',
-  'DevOps Engineer',
+const POPULAR_ROLES = [
+  {
+    id: 'Software Development Engineer (SDE)',
+    tag: 'Core Engineering',
+    title: 'Software Development Engineer (SDE)',
+    desc: 'Data structures, algorithms, object-oriented design & scalable problem-solving.',
+  },
+  {
+    id: 'Full Stack Developer',
+    tag: 'End-to-End',
+    title: 'Full Stack Developer',
+    desc: 'Frontend architecture, backend REST/GraphQL APIs & database integration.',
+  },
+  {
+    id: 'AI / ML Engineer',
+    tag: 'Machine Learning',
+    title: 'AI / ML Engineer',
+    desc: 'Model training, deep learning, NLP, prompt engineering & ML pipelines.',
+  },
+  {
+    id: 'Data Analyst',
+    tag: 'Data & Insights',
+    title: 'Data Analyst',
+    desc: 'SQL querying, business metrics, data visualization & analytical reasoning.',
+  },
+];
+
+const EXPLORE_ROLES = [
+  'Frontend Developer',
+  'Backend Developer',
+  'Data Engineer',
   'Data Scientist',
-  'System Architect',
+  'DevOps Engineer',
+  'Cloud Engineer',
+  'QA / SDET Engineer',
+  'Cybersecurity Analyst',
+  'Business Analyst',
+  'Product Manager',
+  'Other / Custom Role',
+];
+
+const QUESTION_LENGTHS = [
+  {
+    id: 'short',
+    tag: 'Direct & Concise',
+    title: 'Short',
+    desc: 'One clear, concise question without introductory fluff.',
+  },
+  {
+    id: 'medium',
+    tag: 'Balanced Context',
+    title: 'Medium',
+    desc: 'A little context (usually 1–2 sentences) followed by a focused question.',
+  },
+  {
+    id: 'long',
+    tag: 'Scenario-Based',
+    title: 'Long',
+    desc: 'A detailed, relevant scenario when appropriate, without unnecessary wording.',
+  },
 ];
 
 const TYPES = [
@@ -774,10 +935,20 @@ export default function InterviewSetupPage({
 
   const incomingSetupState = location.state?.setupState || {};
 
+  const initialRole = incomingSetupState.targetRole || 'Software Development Engineer (SDE)';
+  const isInitialPopular = POPULAR_ROLES.some((r) => r.id === initialRole);
+  const isInitialExplore = EXPLORE_ROLES.includes(initialRole);
+  const isInitialCustom = !isInitialPopular && !isInitialExplore && initialRole !== '';
+
   const [resumes, setResumes]                   = useState([]);
   const [selectedResumeId, setSelectedResumeId] = useState(location.state?.selectedResumeId || null);
-  const [role, setRole]                         = useState(incomingSetupState.targetRole || 'Full Stack Developer');
+  const [role, setRole]                         = useState(initialRole);
+  const [isCustomRole, setIsCustomRole]         = useState(isInitialCustom);
+  const [customRoleText, setCustomRoleText]     = useState(isInitialCustom ? initialRole : '');
+  const [dropdownOpen, setDropdownOpen]         = useState(false);
+  const [roleSearch, setRoleSearch]             = useState('');
   const [type, setType]                         = useState(incomingSetupState.interviewType || 'technical');
+  const [questionLength, setQuestionLength]     = useState(incomingSetupState.questionLength || 'medium');
   const [difficulty, setDifficulty]             = useState(incomingSetupState.difficulty || 'medium');
   const [questions, setQuestions]               = useState(incomingSetupState.questionCount || 5);
   const [error, setError]                       = useState('');
@@ -786,6 +957,18 @@ export default function InterviewSetupPage({
   const [justUploadedBanner, setJustUploadedBanner] = useState(
     location.state?.justUploaded ? 'Resume uploaded and selected successfully!' : ''
   );
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const user = {
     name: rawUser?.name || 'Candidate',
@@ -840,8 +1023,15 @@ export default function InterviewSetupPage({
     return () => { mounted = false; };
   }, [location.state?.selectedResumeId]);
 
+  const isPopularSelected = POPULAR_ROLES.some((r) => r.id === role) && !isCustomRole;
+  const isExploreRoleSelected = !isPopularSelected && role.trim().length > 0;
+  const filteredExploreRoles = EXPLORE_ROLES.filter((r) =>
+    r.toLowerCase().includes(roleSearch.toLowerCase().trim())
+  );
+
   const selectedResume = resumes.find((r) => r.id === selectedResumeId);
-  const canStart = !!selectedResume && role.trim().length > 0 && !busy;
+  const isRoleValid = role.trim().length >= 2;
+  const canStart = !!selectedResume && isRoleValid && !busy;
 
   const handleGoToUpload = () => {
     navigate('/resume', {
@@ -851,6 +1041,7 @@ export default function InterviewSetupPage({
           targetRole: role,
           interviewType: type,
           difficulty,
+          questionLength,
           questionCount: questions,
         },
       },
@@ -868,6 +1059,7 @@ export default function InterviewSetupPage({
         targetRole: role.trim(),
         interviewType: type,
         difficulty,
+        questionLength,
         questionCount: Number(questions),
       };
 
@@ -884,6 +1076,7 @@ export default function InterviewSetupPage({
         state: {
           session,
           questionCount: Number(questions),
+          questionLength,
         },
       });
     } catch (err) {
@@ -1038,32 +1231,143 @@ export default function InterviewSetupPage({
           <Head
             n="2"
             title="Target Role"
-            text="Enter the job title you are preparing for or pick a popular recommendation."
+            text="Select from popular engineering roles or explore all specialized career paths."
           />
           <div className="n-body">
-            <div>
-              <label className="n-label" htmlFor="role">Role / Title <i>*</i></label>
-              <input
-                id="role"
-                className="n-input"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="e.g. Full Stack Developer"
-                autoComplete="off"
-              />
+            {/* 4 Popular Roles as Selectable Cards */}
+            <div className="n-grid4" role="group" aria-label="Popular roles">
+              {POPULAR_ROLES.map((r) => {
+                const isSelected = role === r.id && !isCustomRole;
+                return (
+                  <button
+                    type="button"
+                    key={r.id}
+                    className={`opt${isSelected ? ' sel' : ''}`}
+                    aria-pressed={isSelected}
+                    onClick={() => {
+                      setRole(r.id);
+                      setIsCustomRole(false);
+                      setDropdownOpen(false);
+                      setCustomRoleText('');
+                    }}
+                  >
+                    <span className="ck"><Icon name="check" /></span>
+                    <span className="n-tag">{r.tag}</span>
+                    <span className="n-t" style={{ fontSize: 15, margin: '10px 0 6px' }}>{r.title}</span>
+                    <span className="n-d">{r.desc}</span>
+                  </button>
+                );
+              })}
             </div>
-            <p className="n-sug">Suggested Roles</p>
-            <div className="n-chips" style={{ marginTop: -2 }}>
-              {SUGGESTED_ROLES.map((r) => (
-                <button
-                  type="button"
-                  key={r}
-                  className={`chip${role === r ? ' sel' : ''}`}
-                  onClick={() => setRole(r)}
-                >
-                  {r}
-                </button>
-              ))}
+
+            {/* Searchable Dropdown: Explore All Roles */}
+            <div className="role-dropdown-wrap" ref={dropdownRef}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                  Explore All Roles
+                </span>
+                {isExploreRoleSelected && (
+                  <span style={{ fontSize: 12, color: 'var(--ink)', fontWeight: 600 }}>
+                    Selected: <strong>{role}</strong>
+                  </span>
+                )}
+              </div>
+
+              <button
+                type="button"
+                className={`role-dropdown-trigger${isExploreRoleSelected ? ' active-role' : ''}`}
+                onClick={() => setDropdownOpen((prev) => !prev)}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="listbox"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                  <Icon name="search" />
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {isCustomRole
+                      ? (customRoleText.trim() ? `Custom: ${customRoleText.trim()}` : 'Custom Role')
+                      : (isExploreRoleSelected ? role : 'Explore All Roles…')}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  {isExploreRoleSelected && (
+                    <span className="pillx k" style={{ margin: 0, padding: '2px 8px' }}>Active</span>
+                  )}
+                  <Icon name="chevronDown" />
+                </div>
+              </button>
+
+              {dropdownOpen && (
+                <div className="role-dropdown-menu" role="listbox">
+                  <div className="role-search-box">
+                    <input
+                      type="text"
+                      className="role-search-input"
+                      placeholder="Filter roles (e.g. DevOps, Cloud, QA)…"
+                      value={roleSearch}
+                      onChange={(e) => setRoleSearch(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {filteredExploreRoles.length === 0 ? (
+                      <div style={{ padding: '12px 14px', fontSize: 13, color: 'var(--muted)', textAlign: 'center' }}>
+                        No matching roles found. You can select "Other / Custom Role" to enter your own title.
+                      </div>
+                    ) : (
+                      filteredExploreRoles.map((item) => {
+                        const isThisSelected = (item === 'Other / Custom Role' && isCustomRole) || (!isCustomRole && role === item);
+                        return (
+                          <button
+                            type="button"
+                            key={item}
+                            className={`role-dropdown-item${isThisSelected ? ' selected' : ''}${item === 'Other / Custom Role' ? ' custom-opt' : ''}`}
+                            onClick={() => {
+                              if (item === 'Other / Custom Role') {
+                                setIsCustomRole(true);
+                                setRole(customRoleText.trim() || 'Custom Role');
+                              } else {
+                                setIsCustomRole(false);
+                                setRole(item);
+                                setCustomRoleText('');
+                              }
+                              setDropdownOpen(false);
+                              setRoleSearch('');
+                            }}
+                          >
+                            <span>{item}</span>
+                            {isThisSelected && <Icon name="check" />}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom Role Text Input if Other / Custom selected */}
+              {isCustomRole && (
+                <div style={{ marginTop: 12, padding: 16, background: '#FAF9F6', border: '1px solid var(--line)', borderRadius: 12 }}>
+                  <label className="n-label" htmlFor="custom-role-input">
+                    Custom Role Title <i>*</i>
+                  </label>
+                  <input
+                    id="custom-role-input"
+                    className="n-input"
+                    value={customRoleText}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCustomRoleText(val);
+                      setRole(val);
+                    }}
+                    placeholder="e.g. Embedded Systems Engineer, Security Architect, Mobile Lead…"
+                    autoFocus
+                  />
+                  <small style={{ display: 'block', marginTop: 5, color: 'var(--muted)', fontSize: 12 }}>
+                    AI will calibrate interview questions specifically for this custom title.
+                  </small>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -1093,10 +1397,35 @@ export default function InterviewSetupPage({
           </div>
         </section>
 
-        {/* Section 4: Difficulty with Semantic Tints (Easy = green, Medium = amber, Hard = red) */}
+        {/* Section 4: Question Length */}
         <section className="n-sec">
           <Head
             n="4"
+            title="Question Length"
+            text="Choose how questions are framed and how much context is presented."
+          />
+          <div className="n-body n-grid3" role="group" aria-label="Question length">
+            {QUESTION_LENGTHS.map((len) => (
+              <button
+                type="button"
+                key={len.id}
+                className={`opt${questionLength === len.id ? ' sel' : ''}`}
+                aria-pressed={questionLength === len.id}
+                onClick={() => setQuestionLength(len.id)}
+              >
+                <span className="ck"><Icon name="check" /></span>
+                <span className="n-tag">{len.tag}</span>
+                <span className="n-t">{len.title}</span>
+                <span className="n-d">{len.desc}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 5: Difficulty with Semantic Tints (Easy = green, Medium = amber, Hard = red) */}
+        <section className="n-sec">
+          <Head
+            n="5"
             title="Difficulty"
             text="Calibrate question complexity according to your current level."
           />
@@ -1117,10 +1446,10 @@ export default function InterviewSetupPage({
           </div>
         </section>
 
-        {/* Section 5: Number of Questions */}
+        {/* Section 6: Number of Questions */}
         <section className="n-sec">
           <Head
-            n="5"
+            n="6"
             title="Number of Questions"
             text="Determine how many questions will be prepared for this mock round."
           />
@@ -1139,7 +1468,7 @@ export default function InterviewSetupPage({
           </div>
         </section>
 
-        {/* Section 6: Ready to Begin */}
+        {/* Section 7: Ready to Begin */}
         <section className="n-go">
           <span className="n-go-badge">Ready to begin</span>
           <p>
@@ -1147,6 +1476,7 @@ export default function InterviewSetupPage({
               selectedResume?.fileName || 'No resume selected',
               role.trim() || 'No role',
               type.toUpperCase(),
+              `${questionLength.toUpperCase()} LENGTH`,
               difficulty.toUpperCase(),
               `${questions} Questions`,
             ].join(' · ')}

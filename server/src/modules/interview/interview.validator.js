@@ -29,6 +29,8 @@ const createInterviewSchema = z.object({
     .int('questionCount must be an integer.')
     .min(1, 'questionCount must be at least 1.')
     .max(20, 'questionCount cannot exceed 20.'),
+
+  questionLength: z.enum(['short', 'medium', 'long']).optional().default('medium'),
 });
 
 const submitAnswerSchema = z.object({

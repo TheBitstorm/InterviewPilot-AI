@@ -155,6 +155,10 @@ export default function InterviewSessionPage({
   const targetCountRef = useRef(targetQuestionCount);
   targetCountRef.current = targetQuestionCount;
 
+  const targetQuestionLength = location.state?.questionLength || 'medium';
+  const targetLengthRef = useRef(targetQuestionLength);
+  targetLengthRef.current = targetQuestionLength;
+
   // ─── Log Timing for First Question Appearance ──────────────────────────────
   useEffect(() => {
     if (questions.length > 0 && !questionAppearanceLoggedRef.current) {
@@ -206,8 +210,10 @@ export default function InterviewSessionPage({
 
       try {
         const countToRequest = targetCountRef.current || 5;
+        const lengthToRequest = targetLengthRef.current || 'medium';
         const genRes = await interviewService.generateQuestions(id, {
           questionCount: countToRequest,
+          questionLength: lengthToRequest,
         });
 
         // Hydrate questions if this component instance is viewing this session
@@ -351,6 +357,7 @@ export default function InterviewSessionPage({
     try {
       const genRes = await interviewService.generateQuestions(id, {
         questionCount: targetCountRef.current || 5,
+        questionLength: targetLengthRef.current || 'medium',
       });
       if (currentSessionIdRef.current === id) {
         const genData = genRes.data?.data || genRes.data;

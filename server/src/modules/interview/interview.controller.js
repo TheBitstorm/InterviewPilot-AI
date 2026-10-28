@@ -56,7 +56,8 @@ const generateInterviewQuestions = async (req, res, next) => {
     const data = await interviewService.generateSessionQuestions(
       req.params.id,
       req.user.id,
-      req.body?.questionCount
+      req.body?.questionCount,
+      req.body?.questionLength
     );
 
     const message = data.generated

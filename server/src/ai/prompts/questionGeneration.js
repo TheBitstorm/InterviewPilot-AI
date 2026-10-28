@@ -9,6 +9,7 @@
  * @param {string} params.interviewType - "technical" | "behavioral" | "hr"
  * @param {string} params.difficulty - "easy" | "medium" | "hard"
  * @param {number} params.questionCount - Number of questions to generate
+ * @param {string} [params.questionLength] - "short" | "medium" | "long"
  * @param {string|null} [params.resumeText] - Optional parsed resume text for context
  * @returns {Array<{role: string, content: string}>} Array of chat completion messages
  */
@@ -17,6 +18,7 @@ const buildQuestionGenerationPrompt = ({
   interviewType,
   difficulty,
   questionCount = 5,
+  questionLength = 'medium',
   resumeText = null,
 }) => {
   const typeGuidance = {
@@ -31,9 +33,16 @@ const buildQuestionGenerationPrompt = ({
     hard: 'Complex edge cases, distributed scaling, nuanced system trade-offs, and high-stakes technical decisions.',
   }[difficulty] || 'Standard industry level.';
 
+  const lengthGuidance = {
+    short: 'One clear, concise question. Strictly 1 single sentence without introductory fluff, preamble, or sub-questions.',
+    medium: 'A little context (usually 1–2 sentences) followed by one clear core question.',
+    long: 'A detailed, relevant production scenario or architecture context (2–3 sentences) presenting a real-world technical challenge, without unnecessary filler wording.',
+  }[questionLength] || 'Standard concise question length.';
+
   const systemPrompt = `You are an expert technical interviewer and hiring manager.
 Format: ${interviewType} interview (${typeGuidance})
 Difficulty: ${difficulty} (${difficultyGuidance})
+Question Length Style: ${questionLength.toUpperCase()} (${lengthGuidance})
 
 Output Format Requirement:
 Respond ONLY with valid JSON matching this exact schema:
@@ -49,11 +58,13 @@ Respond ONLY with valid JSON matching this exact schema:
 
 Guidelines:
 1. Provide exactly ${questionCount} questions.
-2. Keep questions technically sound, clear, relevant to the target role, and non-duplicative.
-3. If candidate resume context is provided, personalize questions to reference their listed technologies or past project areas.
-4. Return raw valid JSON only. Do not wrap in markdown or include extra commentary.`;
+2. Keep questions technically sound, clear, natural, and directly relevant to the ${targetRole} role.
+3. Length and Difficulty Independence: Adhere strictly to the "${questionLength}" length specification while maintaining "${difficulty}" difficulty rigor. For example, a short Hard question must be concise yet technically demanding.
+4. Avoid unnecessarily long introductions and never combine multiple unrelated questions into one.
+5. If candidate resume context is provided, personalize questions to reference their listed technologies or past project areas.
+6. Return raw valid JSON only. Do not wrap in markdown or include extra commentary.`;
 
-  let userContent = `Generate ${questionCount} ${difficulty} ${interviewType} questions for a ${targetRole}.`;
+  let userContent = `Generate ${questionCount} ${difficulty} ${interviewType} questions for a ${targetRole} with ${questionLength} length style.`;
 
   if (resumeText && resumeText.trim().length > 0) {
     // Compact resume text to the most relevant ~1800 characters to optimize prompt prefill speed

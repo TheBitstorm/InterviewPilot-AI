@@ -169,8 +169,9 @@ const inFlightSessionGenerations = new Map();
  * @param {string} sessionId - ID of the interview session
  * @param {string} userId - Authenticated user ID
  * @param {number} [requestedCount] - Optional question count override
+ * @param {string} [requestedLength] - Optional question length ("short" | "medium" | "long")
  */
-const generateSessionQuestions = async (sessionId, userId, requestedCount) => {
+const generateSessionQuestions = async (sessionId, userId, requestedCount, requestedLength = 'medium') => {
   if (inFlightSessionGenerations.has(sessionId)) {
     console.log(`[Generation] Duplicate generation request detected for session ${sessionId}; awaiting existing job`);
     return await inFlightSessionGenerations.get(sessionId);
@@ -183,63 +184,67 @@ const generateSessionQuestions = async (sessionId, userId, requestedCount) => {
         resume: {
           select: {
             id: true,
-          fileName: true,
-          parsedText: true,
+            fileName: true,
+            parsedText: true,
+          },
+        },
+        questions: {
+          orderBy: { orderIndex: 'asc' },
         },
       },
-      questions: {
-        orderBy: { orderIndex: 'asc' },
-      },
-    },
-  });
+    });
 
-  if (!session) {
-    throw new AppError('Interview session not found.', 404);
-  }
-
-  if (session.userId !== userId) {
-    throw new AppError('You do not have permission to access this interview session.', 403);
-  }
-
-  // Idempotency: If questions already exist, do not call Gemini again.
-  if (session.questions && session.questions.length > 0) {
-    let currentSession = session;
-    if (session.status === 'pending') {
-      currentSession = await prisma.interviewSession.update({
-        where: { id: sessionId },
-        data: { status: 'active' },
-        include: {
-          resume: { select: { id: true, fileName: true } },
-        },
-      });
+    if (!session) {
+      throw new AppError('Interview session not found.', 404);
     }
 
-    return {
-      session: {
-        id: currentSession.id,
-        roleTarget: currentSession.roleTarget,
-        type: currentSession.type,
-        difficulty: currentSession.difficulty,
-        status: currentSession.status,
-        createdAt: currentSession.createdAt,
-        resume: currentSession.resume,
-      },
-      questions: session.questions,
-      generated: false,
-    };
-  }
+    if (session.userId !== userId) {
+      throw new AppError('You do not have permission to access this interview session.', 403);
+    }
 
-  const tTotal = Date.now();
-  const questionCount = Number(requestedCount) || 5;
+    // Idempotency: If questions already exist, do not call Gemini again.
+    if (session.questions && session.questions.length > 0) {
+      let currentSession = session;
+      if (session.status === 'pending') {
+        currentSession = await prisma.interviewSession.update({
+          where: { id: sessionId },
+          data: { status: 'active' },
+          include: {
+            resume: { select: { id: true, fileName: true } },
+          },
+        });
+      }
 
-  // Build the Gemini prompt with all session parameters & resume context
-  const messages = buildQuestionGenerationPrompt({
-    targetRole: session.roleTarget,
-    interviewType: session.type,
-    difficulty: session.difficulty,
-    questionCount,
-    resumeText: session.resume?.parsedText || null,
-  });
+      return {
+        session: {
+          id: currentSession.id,
+          roleTarget: currentSession.roleTarget,
+          type: currentSession.type,
+          difficulty: currentSession.difficulty,
+          status: currentSession.status,
+          createdAt: currentSession.createdAt,
+          resume: currentSession.resume,
+        },
+        questions: session.questions,
+        generated: false,
+      };
+    }
+
+    const tTotal = Date.now();
+    const questionCount = Number(requestedCount) || 5;
+    const questionLength = ['short', 'medium', 'long'].includes(requestedLength)
+      ? requestedLength
+      : 'medium';
+
+    // Build the Gemini prompt with all session parameters & resume context
+    const messages = buildQuestionGenerationPrompt({
+      targetRole: session.roleTarget,
+      interviewType: session.type,
+      difficulty: session.difficulty,
+      questionCount,
+      questionLength,
+      resumeText: session.resume?.parsedText || null,
+    });
 
   const maxTokens = Math.min(1500, Math.max(500, questionCount * 140));
   const aiStart = Date.now();
